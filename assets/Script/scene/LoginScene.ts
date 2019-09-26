@@ -85,10 +85,16 @@ export default class LoginScene extends cc.Component {
         let url:string = GameUtils.http_url+'/register';
         Http.post(url,{account,password,name,sex},(eventName: string, xhr: XMLHttpRequest)=>{
             if (eventName == 'COMPLETE') {
-                cc.log("链接服务器成功")
                 if (xhr.readyState == 4 && (xhr.status >= 200 && xhr.status < 400)) {
                     var response = JSON.parse(xhr.responseText)
                     console.log(response);
+                    if (response.code == 0) {
+                        alert.showAlert('恭喜，注册成功.', function(){
+                        }, false);
+                    }else{
+                        alert.showAlert(response.data, function(){
+                        }, false);
+                    }
                 }
             } else if (eventName == 'TIMEOUT') {
                 //TODO:添加提示连接网关超时
