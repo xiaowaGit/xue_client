@@ -16,6 +16,10 @@ export class GameUtils {
     ///// http地址
     public static http_url:string = "http://127.0.0.1:3002";
 
+    //// 用户 登录 数据
+    public static uid:number = null;
+    public static token:string = null;
+
     public static getInstance():GameUtils {
         if (!GameUtils._instance) {
             GameUtils._instance = new GameUtils();

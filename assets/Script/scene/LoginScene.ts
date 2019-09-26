@@ -110,5 +110,107 @@ export default class LoginScene extends cc.Component {
      */
     login() {
 
+        let account:string = this.login_account.string;
+        let password:string = this.login_password.string;
+
+        let alert:Alert = this.alertDialog.getComponent(Alert);
+        ///// 检测参数
+        if (account.length < 5) {
+            alert.showAlert('账户名过短.', function(){
+                console.log("xiaowa========== account.length < 5");
+            }, false);
+            return;
+        }
+        if (password.length < 5) {
+            alert.showAlert('密码过短.', function(){
+            }, false);
+            return;
+        }
+        let url:string = GameUtils.http_url+'/login';
+        Http.post(url,{account,password},(eventName: string, xhr: XMLHttpRequest)=>{
+            if (eventName == 'COMPLETE') {
+                if (xhr.readyState == 4 && (xhr.status >= 200 && xhr.status < 400)) {
+                    var response = JSON.parse(xhr.responseText)
+                    console.log(response);
+                    if (response.code == 0) {
+                        GameUtils.uid = response.data.uid;
+                        GameUtils.token = response.data.token;
+                        console.log("xiaowa===== 登录成功,uid,token = ",GameUtils.uid,GameUtils.token);
+                        this.entry();
+                    }else{
+                        alert.showAlert(response.data, function(){
+                        }, false);
+                    }
+                }
+            } else if (eventName == 'TIMEOUT') {
+                //TODO:添加提示连接网关超时
+                console.log("超时");
+            } else if (eventName == 'ERROR') {
+                console.log("错误");
+            }
+        },this);
+    }
+
+    /**
+     * 登录长连接服务器
+     */
+    entry() {
+
+        this.btn_login.enabled = false;//防止继续点击
+        this.btn_login.interactable = false;
+        GameUtils.getInstance().init();
+        var pinus = GameUtils.getInstance().pinus;
+        var host = "127.0.0.1";
+
+        let self = this;
+        // query connector
+        function queryEntry(uid, callback) {
+            var route = 'gate.gateHandler.queryEntry';
+            pinus.init({
+                host: host,
+                port: 3014,
+                log: true
+            }, function() {
+                pinus.request(route, {
+                    uid: uid
+                }, function(data) {
+                    pinus.disconnect();
+                    if(data.code === 500) {
+                        console.log("xiaowa ========= queryEntry fail");
+                        self.btn_login.enabled = true;
+                        self.btn_login.interactable = true;
+                        return;
+                    }
+                    callback(data.host, data.port);
+                    // callback("17731in702.iask.in", 26127);
+                });
+            });
+        };
+
+        //query entry of connection
+		queryEntry(""+GameUtils.uid, function(host:string,port:string) {
+			pinus.init({
+				host: host,
+				port: port,
+				log: true
+			}, function() {
+				var route = "connector.entryHandler.entry";
+				pinus.request(route, {
+                    uid:GameUtils.uid,
+                    token:GameUtils.token,
+				}, function(data) {
+					if(data.error) {
+                        console.log("xiaowa ========= entry fail");
+                        self.btn_login.enabled = true;
+                        self.btn_login.interactable = true;
+						return;
+					}else{
+                        cc.log(data);
+                        // cc.director.loadScene("GameScene");
+                    }
+				});
+			});
+        });
+        
     }
 }
