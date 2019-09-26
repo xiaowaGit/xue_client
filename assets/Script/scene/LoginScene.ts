@@ -1,3 +1,7 @@
+import { GameUtils } from "../utils/GameUtils";
+import Alert from "../base/Alert";
+import { Http } from "../net/Http";
+
 const {ccclass, property} = cc._decorator;
 
 @ccclass
@@ -45,6 +49,8 @@ export default class LoginScene extends cc.Component {
         },this);
         
         this.alertDialog = cc.instantiate(this.alertPrefab);
+        this.alertDialog.x = GameUtils.centre_x;
+        this.alertDialog.y = GameUtils.centre_y;
     }
 
     /**
@@ -58,14 +64,39 @@ export default class LoginScene extends cc.Component {
         if (this.sex_man.isChecked) sex = '男';
         else if (this.sex_woman.isChecked) sex = '女';
 
+        let alert:Alert = this.alertDialog.getComponent(Alert);
         ///// 检测参数
         if (account.length < 5) {
-            this.alertDialog.getComponent('Alert').showAlert('账户名过短.', function(){
+            alert.showAlert('账户名过短.', function(){
+                console.log("xiaowa========== account.length < 5");
             }, false);
-            this.alertDialog.x = 960;
-            this.alertDialog.y = 540;
             return;
         }
+        if (password.length < 5) {
+            alert.showAlert('密码过短.', function(){
+            }, false);
+            return;
+        }
+        if (name.length < 1) {
+            alert.showAlert('姓名过短.', function(){
+            }, false);
+            return;
+        }
+        let url:string = GameUtils.http_url+'/register';
+        Http.post(url,{account,password,name,sex},(eventName: string, xhr: XMLHttpRequest)=>{
+            if (eventName == 'COMPLETE') {
+                cc.log("链接服务器成功")
+                if (xhr.readyState == 4 && (xhr.status >= 200 && xhr.status < 400)) {
+                    var response = JSON.parse(xhr.responseText)
+                    console.log(response);
+                }
+            } else if (eventName == 'TIMEOUT') {
+                //TODO:添加提示连接网关超时
+                console.log("超时");
+            } else if (eventName == 'ERROR') {
+                console.log("错误");
+            }
+        },this);
     }
 
     /**
