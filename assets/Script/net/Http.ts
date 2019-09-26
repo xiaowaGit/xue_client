@@ -57,8 +57,8 @@ export class Http{
             callback.call(thisObj, "TIMEOUT", xhr)
         }
 
-
         xhr.open("POST", url, true);
-        xhr.send(params);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.send(JSON.stringify(params));
     }
 }
