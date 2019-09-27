@@ -207,7 +207,7 @@ export default class LoginScene extends cc.Component {
 					}else{
                         cc.log(data);
                         if (data.code == 0) { // 登录成功，进入大厅
-                            // cc.director.loadScene("HallScene");
+                            cc.director.loadScene("HallScene");
                         }
                     }
 				});
