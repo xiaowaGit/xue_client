@@ -1,5 +1,6 @@
 import Slot from "../base/Slot";
 import { Image_Slot } from "../utils/tool";
+import PutBetIndex from "../base/PutBetIndex";
 
 const {ccclass, property} = cc._decorator;
 
@@ -22,11 +23,27 @@ export default class NewClass extends cc.Component {
     @property(cc.Prefab)
     slotPrefab: cc.Prefab = null;
 
+    @property(PutBetIndex)
+    put_bet_index:PutBetIndex = null;
+
+    @property(cc.Button)
+    btn_dec:cc.Button = null;
+
+    @property(cc.Button)
+    btn_inc:cc.Button = null;
+
+    @property(cc.Label)
+    lbl_put_bet:cc.Label = null;
+
     /// slot
     private slot_list:Slot[] = [];
 
     private slot_y:number = 45;
     private slot_move_x:number = -485/2;
+
+    private put_bet_list:number[] = [900,1800,2700,3600,4500,5400,6300,7200,8100,9000];
+    private bet_index:number = 0;
+    private put_bet:number = 900;
     // onLoad () {}
 
     start () {
@@ -44,6 +61,35 @@ export default class NewClass extends cc.Component {
         }
         
         this.btn_start.node.on("click",this.start_up.bind(this),this);
+
+        this.put_bet_index.init(this.put_bet_list.length);
+        this.set_put_bet(0);
+
+        /// 减1 index
+        this.btn_dec.node.on('click',function () {
+            this.bet_index --;
+            if (this.bet_index < 0) this.bet_index = 0;
+            this.set_put_bet(this.bet_index);
+        },this);
+        //// 加1 index
+        this.btn_inc.node.on('click',function () {
+            this.bet_index ++;
+            if (this.bet_index >= this.put_bet_list.length) this.bet_index = this.put_bet_list.length - 1;
+            this.set_put_bet(this.bet_index);
+        },this);
+        //// max
+        this.btn_max_bet.node.on('click',function () {
+            this.bet_index = this.put_bet_list.length - 1;
+            this.set_put_bet(this.bet_index);
+        },this);
+    }
+
+
+    set_put_bet(index:number) {
+        if (index < 0 || index >= this.put_bet_list.length) return;
+        this.put_bet = this.put_bet_list[~~index];
+        this.put_bet_index.goto(~~index);
+        this.lbl_put_bet.string = "" + this.put_bet;
     }
 
     /**
@@ -51,11 +97,11 @@ export default class NewClass extends cc.Component {
      */
     start_up() {
         let element_list:Image_Slot[] = [Image_Slot.Image_Banana,Image_Slot.Image_Mango,Image_Slot.Image_Pineapple];
-        this.slot_list[0].start_up(element_list,50,5);
-        this.slot_list[1].start_up(element_list,50,5.4);
-        this.slot_list[2].start_up(element_list,50,5.8);
-        this.slot_list[3].start_up(element_list,50,6.2);
-        this.slot_list[4].start_up(element_list,50,6.6);
+        this.slot_list[0].start_up(element_list,50,4);
+        this.slot_list[1].start_up(element_list,50,4.4);
+        this.slot_list[2].start_up(element_list,50,4.8);
+        this.slot_list[3].start_up(element_list,50,5.2);
+        this.slot_list[4].start_up(element_list,50,5.6);
     }
 
     // update (dt) {}
