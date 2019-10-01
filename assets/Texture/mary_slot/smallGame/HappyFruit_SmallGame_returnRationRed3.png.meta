@@ -1,0 +1,31 @@
+{
+  "ver": "2.2.0",
+  "uuid": "0f7e199b-6671-4cf3-a1f8-d9a8f3785c09",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "subMetas": {
+    "HappyFruit_SmallGame_returnRationRed3": {
+      "ver": "1.0.3",
+      "uuid": "11cda79f-1bca-4eaf-b93d-9e6b924b7b49",
+      "rawTextureUuid": "0f7e199b-6671-4cf3-a1f8-d9a8f3785c09",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 9,
+      "trimY": 0,
+      "width": 55,
+      "height": 26,
+      "rawWidth": 73,
+      "rawHeight": 26,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}
