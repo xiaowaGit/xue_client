@@ -7880,8 +7880,27 @@
       "__id__": 67
     },
     "_enabled": true,
-    "label": null,
-    "text": "hello",
+    "node_image_list": {
+      "__id__": 72
+    },
+    "node_exp": {
+      "__id__": 121
+    },
+    "node_info": {
+      "__id__": 156
+    },
+    "lbl_num": {
+      "__id__": 164
+    },
+    "node_slot_in": {
+      "__id__": 165
+    },
+    "node_slot_out": {
+      "__id__": 166
+    },
+    "spr_frame_light": {
+      "__uuid__": "a52e753d-aa85-4796-b981-845b82a30e2b"
+    },
     "_id": "beI5AJFiFEFq/l+UmfxeM9"
   },
   {
@@ -7935,6 +7954,9 @@
     },
     "lbl_put_bet": {
       "__id__": 54
+    },
+    "small_game": {
+      "__id__": 167
     },
     "_id": "ee1H+aAotPwa5GfDBotTGF"
   }

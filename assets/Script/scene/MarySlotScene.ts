@@ -1,6 +1,7 @@
 import Slot from "../base/Slot";
 import { Image_Slot } from "../utils/tool";
 import PutBetIndex from "../base/PutBetIndex";
+import SmallGame from "../base/SmallGame";
 
 const {ccclass, property} = cc._decorator;
 
@@ -34,6 +35,9 @@ export default class NewClass extends cc.Component {
 
     @property(cc.Label)
     lbl_put_bet:cc.Label = null;
+
+    @property(SmallGame)
+    small_game:SmallGame = null;
 
     /// slot
     private slot_list:Slot[] = [];
@@ -82,6 +86,9 @@ export default class NewClass extends cc.Component {
             this.bet_index = this.put_bet_list.length - 1;
             this.set_put_bet(this.bet_index);
         },this);
+
+        this.small_game.init(3);
+        this.small_game.start_slot();
     }
 
 
