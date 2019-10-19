@@ -6,7 +6,7 @@ import SmallGame from "../base/SmallGame";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class NewClass extends cc.Component {
+export default class MarySlotScene extends cc.Component {
 
     @property(cc.Node)
     node_line: cc.Node = null;
@@ -87,8 +87,8 @@ export default class NewClass extends cc.Component {
             this.set_put_bet(this.bet_index);
         },this);
 
+        // this.small_game.node.active = false;
         this.small_game.init(3);
-        this.small_game.start_slot();
     }
 
 
@@ -111,5 +111,21 @@ export default class NewClass extends cc.Component {
         this.slot_list[4].start_up(element_list,50,5.6);
     }
 
+    goto_room() {
+        var route = "mary_slot.marySlotHandler.entry";
+        pinus.request(route, {
+            room_index:1,
+        }, function(data) {
+            if(data.error) {
+                console.log("xiaowa ========= entry fail");
+                return;
+            }else{
+                cc.log(data);
+                if (data.code == 0) {
+
+                }
+            }
+        });
+    }
     // update (dt) {}
 }

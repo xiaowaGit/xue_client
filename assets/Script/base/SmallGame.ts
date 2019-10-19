@@ -1,3 +1,5 @@
+import Slot from "./Slot";
+import { Image_Slot } from "../utils/tool";
 
 const {ccclass, property} = cc._decorator;
 
@@ -25,6 +27,15 @@ export default class SmallGame extends cc.Component {
     @property(cc.SpriteFrame)
     spr_frame_light:cc.SpriteFrame = null;
     
+    ///////////////// slot组件
+    @property(cc.Prefab)
+    slotPrefab: cc.Prefab = null;
+
+    private slot_y:number = -8;
+    private slot_move_x:number = -485/2;
+    /// slot
+    private slot_list:Slot[] = [];
+
     // 旋转次数
     private slot_num:number = 0;
 
@@ -35,7 +46,20 @@ export default class SmallGame extends cc.Component {
                                 ];
     
     start () {
-
+        let o_x:number = this.slot_move_x * 2 + 120;
+        let o_y:number = this.slot_y;
+        for (let i = 0; i < 4; i++) {
+            let one_slot:cc.Node = cc.instantiate(this.slotPrefab);
+            one_slot.x = o_x;
+            one_slot.y = o_y;
+            o_x -= this.slot_move_x;
+            this.node_slot_in.addChild(one_slot);
+            let slot:Slot = one_slot.getComponent(Slot);
+            slot.init(true);
+            this.slot_list.push(slot);
+        }
+        
+        this.start_slot();
     }
 
     init(num:number) {
@@ -45,6 +69,11 @@ export default class SmallGame extends cc.Component {
 
     start_slot() {
         this.slot_to_index(0);
+        let element_list:Image_Slot[] = [Image_Slot.Image_Banana,Image_Slot.Image_Mango,Image_Slot.Image_Pineapple];
+        this.slot_list[0].start_up(element_list,50,4);
+        this.slot_list[1].start_up(element_list,50,4.4);
+        this.slot_list[2].start_up(element_list,50,4.8);
+        this.slot_list[3].start_up(element_list,50,5.2);
     }
 
     slot_to_index(index:number) {
