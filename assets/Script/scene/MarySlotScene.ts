@@ -4,6 +4,7 @@ import PutBetIndex from "../base/PutBetIndex";
 import SmallGame from "../base/SmallGame";
 import { GameUtils } from "../utils/GameUtils";
 import Alert from "../base/Alert";
+import { Http } from "../net/Http";
 
 const {ccclass, property} = cc._decorator;
 
@@ -46,6 +47,23 @@ export default class MarySlotScene extends cc.Component {
     @property(cc.Prefab)
     alertPrefab: cc.Prefab = null;
 
+    @property(cc.Sprite)
+    spr_avatar: cc.Sprite = null;
+
+    @property(cc.Label)
+    lbl_name: cc.Label = null;
+
+    @property(cc.Label)
+    lbl_coin: cc.Label = null;
+
+    @property(cc.Label)
+    lbl_info: cc.Label = null;
+
+    @property(cc.Label)
+    lbl_reward: cc.Label = null;
+
+    @property(cc.Label)
+    lbl_pool: cc.Label = null;
 
     /// slot
     private slot_list:Slot[] = [];
@@ -62,7 +80,15 @@ export default class MarySlotScene extends cc.Component {
     // 弹窗
     private alertDialog: cc.Node = null;
 
+
+    /// 小游戏次数
+    private small_game_num: number = null;
+    /// 免费游戏次数
+    private free_game_num: number = null;
+
     // onLoad () {}
+
+    //////////////////////////////////////-------视图逻辑-----------------------------------------------
 
     start () {
         let o_x:number = this.slot_move_x * 2;
@@ -107,6 +133,9 @@ export default class MarySlotScene extends cc.Component {
         this.alertDialog = cc.instantiate(this.alertPrefab);
         this.alertDialog.x = GameUtils.centre_x;
         this.alertDialog.y = GameUtils.centre_y;
+
+        // this.get_info();
+        // this.goto_room();
     }
 
 
@@ -118,10 +147,81 @@ export default class MarySlotScene extends cc.Component {
     }
 
     /**
+     * 更新用户信息，支持部分数据更新
+     * @param name 
+     * @param coin 
+     * @param info 
+     * @param reward 
+     * @param pool 
+     */
+    update_info(name:string,coin:number,info:string,reward:number,pool:number) {
+        if(name)this.lbl_name.string = name;
+        if(coin)this.lbl_coin.string = ''+coin;
+        if(info)this.lbl_info.string = info;
+        if(reward)this.lbl_reward.string = ''+reward;
+        if(pool)this.lbl_pool.string = ''+pool;
+    }
+
+
+    start_slot(ret:[number[],number[],number[],number[],number[]]) {
+
+        this.slot_list[0].start_up(ret[0],50,4);
+        this.slot_list[1].start_up(ret[1],50,4.4);
+        this.slot_list[2].start_up(ret[2],50,4.8);
+        this.slot_list[3].start_up(ret[3],50,5.2);
+        this.slot_list[4].start_up(ret[4],50,5.6);
+
+
+        // let element_list:Image_Slot[] = [Image_Slot.Image_Banana,Image_Slot.Image_Mango,Image_Slot.Image_Pineapple];
+        // this.slot_list[0].start_up(element_list,50,4);
+        // this.slot_list[1].start_up(element_list,50,4.4);
+        // this.slot_list[2].start_up(element_list,50,4.8);
+        // this.slot_list[3].start_up(element_list,50,5.2);
+        // this.slot_list[4].start_up(element_list,50,5.6);
+    }
+
+    /**
+     * 播放中奖动画
+     * @param total_reward 
+     */
+    play_reward_animation(total_reward:number) {
+        
+    }
+
+
+    /////////////////////////////-----------业务逻辑----------------------------------------------------
+
+    get_info() {
+        let alert:Alert = this.alertDialog.getComponent(Alert);
+        let url:string = GameUtils.http_url+'/get_info';
+        Http.post(url,{uid:GameUtils.uid,token:GameUtils.token},(eventName: string, xhr: XMLHttpRequest)=>{
+            if (eventName == 'COMPLETE') {
+                if (xhr.readyState == 4 && (xhr.status >= 200 && xhr.status < 400)) {
+                    var response = JSON.parse(xhr.responseText)
+                    console.log(response);
+                    if (response.code == 0) {
+                        ///// 显示用户信息
+                        let {uid,name,sex,avatar,coin} = response.data;
+                        this.update_info(name,coin,'恭喜发财',0,0);
+                    }else{
+                        alert.showAlert(response.data, function(){
+                        }, false);
+                    }
+                }
+            } else if (eventName == 'TIMEOUT') {
+                //TODO:添加提示连接网关超时
+                console.log("超时");
+            } else if (eventName == 'ERROR') {
+                console.log("错误");
+            }
+        },this);
+    }
+
+    /**
      * 开始slot
      */
     start_up() {
-
+        let self = this;
         let alert:Alert = this.alertDialog.getComponent(Alert);
         if (this.is_in_room == false) {
             alert.showAlert('还未进入房间.', function(){
@@ -144,18 +244,26 @@ export default class MarySlotScene extends cc.Component {
                     }, false);
                     return;
                 }else{
-                    
+                    let {ret,small_game_num,line_multiple,free_game_num,pool_multiple,is_reward,line_reward,pool_reward,total_reward,current_coin} = data;
+                    self.small_game_num = small_game_num;
+                    self.free_game_num = free_game_num;
+                    let line_reward_num: number = 0;
+                    for (let index = 0; index < line_multiple.length; index++) {
+                        const element = line_multiple[index];
+                        if (element > 0)line_reward_num ++;
+                    }
+                    let info:string = '恭喜发财';
+                    if (line_reward_num > 0) info += ',喜中 '+line_reward_num+' 线';
+
+                    if (is_reward) {/// 播放中奖效果动画
+                        self.play_reward_animation(total_reward);
+                    }
+                    self.update_info(null,current_coin,info,total_reward,null);
+                    self.start_slot(ret);
                 }
             }
         });
 
-
-        let element_list:Image_Slot[] = [Image_Slot.Image_Banana,Image_Slot.Image_Mango,Image_Slot.Image_Pineapple];
-        this.slot_list[0].start_up(element_list,50,4);
-        this.slot_list[1].start_up(element_list,50,4.4);
-        this.slot_list[2].start_up(element_list,50,4.8);
-        this.slot_list[3].start_up(element_list,50,5.2);
-        this.slot_list[4].start_up(element_list,50,5.6);
     }
 
     goto_room() {

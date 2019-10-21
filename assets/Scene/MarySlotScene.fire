@@ -3216,7 +3216,7 @@
         "__id__": 166
       }
     ],
-    "_active": true,
+    "_active": false,
     "_level": 1,
     "_components": [
       {
@@ -7960,6 +7960,27 @@
     },
     "small_game": {
       "__id__": 167
+    },
+    "alertPrefab": {
+      "__uuid__": "1df1142d-2e5f-4fbb-9da0-5bbe573fe2b0"
+    },
+    "spr_avatar": {
+      "__id__": 56
+    },
+    "lbl_name": {
+      "__id__": 58
+    },
+    "lbl_coin": {
+      "__id__": 60
+    },
+    "lbl_info": {
+      "__id__": 62
+    },
+    "lbl_reward": {
+      "__id__": 64
+    },
+    "lbl_pool": {
+      "__id__": 66
     },
     "_id": "ee1H+aAotPwa5GfDBotTGF"
   }
