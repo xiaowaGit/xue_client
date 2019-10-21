@@ -20,6 +20,8 @@ export class GameUtils {
     public static uid:number = null;
     public static token:string = null;
 
+    public static mary_slot_room_index:number = null; //// 1-4
+
     public static getInstance():GameUtils {
         if (!GameUtils._instance) {
             GameUtils._instance = new GameUtils();

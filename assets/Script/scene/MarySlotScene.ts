@@ -2,6 +2,8 @@ import Slot from "../base/Slot";
 import { Image_Slot } from "../utils/tool";
 import PutBetIndex from "../base/PutBetIndex";
 import SmallGame from "../base/SmallGame";
+import { GameUtils } from "../utils/GameUtils";
+import Alert from "../base/Alert";
 
 const {ccclass, property} = cc._decorator;
 
@@ -39,6 +41,12 @@ export default class MarySlotScene extends cc.Component {
     @property(SmallGame)
     small_game:SmallGame = null;
 
+    
+    ///////////////// 弹窗组件
+    @property(cc.Prefab)
+    alertPrefab: cc.Prefab = null;
+
+
     /// slot
     private slot_list:Slot[] = [];
 
@@ -48,6 +56,12 @@ export default class MarySlotScene extends cc.Component {
     private put_bet_list:number[] = [900,1800,2700,3600,4500,5400,6300,7200,8100,9000];
     private bet_index:number = 0;
     private put_bet:number = 900;
+
+    private is_in_room:boolean = false;  /// 是否在房间中
+
+    // 弹窗
+    private alertDialog: cc.Node = null;
+
     // onLoad () {}
 
     start () {
@@ -87,8 +101,12 @@ export default class MarySlotScene extends cc.Component {
             this.set_put_bet(this.bet_index);
         },this);
 
-        // this.small_game.node.active = false;
-        this.small_game.init(3);
+        this.small_game.node.active = false;
+        // this.small_game.init(3);
+        
+        this.alertDialog = cc.instantiate(this.alertPrefab);
+        this.alertDialog.x = GameUtils.centre_x;
+        this.alertDialog.y = GameUtils.centre_y;
     }
 
 
@@ -103,6 +121,35 @@ export default class MarySlotScene extends cc.Component {
      * 开始slot
      */
     start_up() {
+
+        let alert:Alert = this.alertDialog.getComponent(Alert);
+        if (this.is_in_room == false) {
+            alert.showAlert('还未进入房间.', function(){
+            }, false);
+            return;
+        }
+
+        ///// 开始slot
+        let route = "mary_slot.marySlotHandler.put_bet";
+        pinus.request(route, {
+            bet:this.put_bet,
+        }, function(data) {
+            if(data.error) {
+                console.log("xiaowa ========= entry fail");
+                return;
+            }else{
+                cc.log(data);
+                if (data.code && data.code != 0) {
+                    alert.showAlert(data.data, function(){
+                    }, false);
+                    return;
+                }else{
+                    
+                }
+            }
+        });
+
+
         let element_list:Image_Slot[] = [Image_Slot.Image_Banana,Image_Slot.Image_Mango,Image_Slot.Image_Pineapple];
         this.slot_list[0].start_up(element_list,50,4);
         this.slot_list[1].start_up(element_list,50,4.4);
@@ -112,9 +159,9 @@ export default class MarySlotScene extends cc.Component {
     }
 
     goto_room() {
-        var route = "mary_slot.marySlotHandler.entry";
+        let route = "mary_slot.marySlotHandler.entry";
         pinus.request(route, {
-            room_index:1,
+            room_index:GameUtils.mary_slot_room_index,
         }, function(data) {
             if(data.error) {
                 console.log("xiaowa ========= entry fail");
@@ -122,7 +169,7 @@ export default class MarySlotScene extends cc.Component {
             }else{
                 cc.log(data);
                 if (data.code == 0) {
-
+                    this.is_in_room = true;
                 }
             }
         });

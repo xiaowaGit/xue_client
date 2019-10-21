@@ -78,6 +78,7 @@ export default class HallScene extends cc.Component {
      * 进入水果玛丽
      */
     enter_mary_slot() {
+        GameUtils.mary_slot_room_index = 1; /// 房间编号
         cc.director.loadScene("MarySlotScene");
     }
 }
