@@ -7961,6 +7961,9 @@
     "small_game": {
       "__id__": 167
     },
+    "coin": {
+      "__uuid__": "18d794c4-c69d-4221-bd70-119f7ebfe0bf"
+    },
     "alertPrefab": {
       "__uuid__": "1df1142d-2e5f-4fbb-9da0-5bbe573fe2b0"
     },

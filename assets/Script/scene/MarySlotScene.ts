@@ -5,6 +5,7 @@ import SmallGame from "../base/SmallGame";
 import { GameUtils } from "../utils/GameUtils";
 import Alert from "../base/Alert";
 import { Http } from "../net/Http";
+import Coin from "../base/Coin";
 
 const {ccclass, property} = cc._decorator;
 
@@ -43,6 +44,11 @@ export default class MarySlotScene extends cc.Component {
     small_game:SmallGame = null;
 
     
+    ///////////////// 金币组件
+    @property(cc.Prefab)
+    coin: cc.Prefab = null;
+
+
     ///////////////// 弹窗组件
     @property(cc.Prefab)
     alertPrefab: cc.Prefab = null;
@@ -136,6 +142,11 @@ export default class MarySlotScene extends cc.Component {
 
         // this.get_info();
         // this.goto_room();
+
+        let node:cc.Node = cc.instantiate(this.coin);
+        let coin:Coin = node.getComponent(Coin);
+        this.node.addChild(node);
+        coin.play(4000);
     }
 
 
