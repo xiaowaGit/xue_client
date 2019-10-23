@@ -142,6 +142,7 @@ export default class MarySlotScene extends cc.Component {
         this.alertDialog = cc.instantiate(this.alertPrefab);
         this.alertDialog.x = GameUtils.centre_x;
         this.alertDialog.y = GameUtils.centre_y;
+        this.node.addChild(this.alertDialog);
 
         this.get_info();
         this.goto_room();
@@ -332,6 +333,7 @@ export default class MarySlotScene extends cc.Component {
     }
 
     goto_room() {
+        let self = this;
         var pinus = GameUtils.getInstance().pinus;
         let route = "mary_slot.marySlotHandler.entry";
         pinus.request(route, {
@@ -344,6 +346,10 @@ export default class MarySlotScene extends cc.Component {
                 cc.log(data);
                 if (data.code == 0) {
                     this.is_in_room = true;
+                }else{
+                    let alert:Alert = self.alertDialog.getComponent(Alert);
+                    alert.showAlert(data.data, function(){
+                    }, false);
                 }
             }
         });

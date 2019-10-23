@@ -59,6 +59,14 @@ export class Http{
 
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.send(JSON.stringify(params));
+        
+        let out_str:string = '';
+        for (const key in params) {
+            if (params.hasOwnProperty(key)) {
+                const value = params[key];
+                out_str +=  key + '=' + value + '&';
+            }
+        }
+        xhr.send(out_str.substring(0, out_str.length - 1));
     }
 }
