@@ -66,11 +66,11 @@ export default class Coin extends cc.Component {
                     node.runAction(action);
                 }else if (index == 1) {
                     this.node.addChild(node);
-                    let action2 = cc.delayTime(1);
+                    let action2 = cc.delayTime(0.5);
                     node.runAction(cc.sequence(action2,action));
                 }else if (index == 2) {
                     this.node.addChild(node);
-                    let action2 = cc.delayTime(2);
+                    let action2 = cc.delayTime(1);
                     node.runAction(cc.sequence(action2,action));
                 }
                 node.scale = 1.33;

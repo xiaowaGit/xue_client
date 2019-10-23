@@ -15,6 +15,9 @@ export default class MarySlotScene extends cc.Component {
     @property(cc.Node)
     node_line: cc.Node = null;
 
+    @property([cc.Node])
+    node_line_list:cc.Node[] = [];
+
     @property(cc.Node)
     node_slot: cc.Node = null;
 
@@ -140,13 +143,9 @@ export default class MarySlotScene extends cc.Component {
         this.alertDialog.x = GameUtils.centre_x;
         this.alertDialog.y = GameUtils.centre_y;
 
-        // this.get_info();
-        // this.goto_room();
+        this.get_info();
+        this.goto_room();
 
-        let node:cc.Node = cc.instantiate(this.coin);
-        let coin:Coin = node.getComponent(Coin);
-        this.node.addChild(node);
-        coin.play(4000);
     }
 
 
@@ -196,9 +195,53 @@ export default class MarySlotScene extends cc.Component {
      * @param total_reward 
      */
     play_reward_animation(total_reward:number) {
-        
+        let node:cc.Node = cc.instantiate(this.coin);
+        let coin:Coin = node.getComponent(Coin);
+        this.node.addChild(node);
+        coin.play(total_reward);
     }
 
+    /**
+     * 闪烁线
+     * @param line_multiple 
+     */
+    play_light_line(line_multiple:number[]) {
+        this.node_line.active = true;
+        let light_list:number[] = [];
+        for (let index = 0; index < 9; index++) {
+            this.node_line_list[index].active = false;
+            if (line_multiple[index] > 0) light_list.push(index);
+        }
+        let self = this;
+        /////// 点亮某一个
+        function light_index(index:number) {
+            for (let i = 0; i < 9; i++) {
+                self.node_line_list[i].active = false;
+            }
+            self.node_line_list[index].active = true;
+        }
+
+        let action_list = [];
+        //////// 闪烁
+        for (let index = 0; index < light_list.length; index++) {
+            const element = light_list[index];
+            let action = cc.callFunc(function() {
+                light_index(element);
+            }, this);
+            let finished = cc.delayTime(1);
+            action_list.push(action);
+            action_list.push(finished);
+        }
+        self.node_line.runAction(cc.repeatForever(cc.sequence(action_list)));
+    }
+
+    /**
+     * 停止闪烁线
+     */
+    stop_light_line() {
+        this.node_line.stopAllActions();
+        this.node_line.active = false;
+    }
 
     /////////////////////////////-----------业务逻辑----------------------------------------------------
 
@@ -240,6 +283,11 @@ export default class MarySlotScene extends cc.Component {
             return;
         }
 
+        /////// 锁定按钮
+        this.btn_start.enabled = false;
+        this.btn_start.interactable = false;
+
+        var pinus = GameUtils.getInstance().pinus;
         ///// 开始slot
         let route = "mary_slot.marySlotHandler.put_bet";
         pinus.request(route, {
@@ -266,11 +314,17 @@ export default class MarySlotScene extends cc.Component {
                     let info:string = '恭喜发财';
                     if (line_reward_num > 0) info += ',喜中 '+line_reward_num+' 线';
 
-                    if (is_reward) {/// 播放中奖效果动画
-                        self.play_reward_animation(total_reward);
-                    }
-                    self.update_info(null,current_coin,info,total_reward,null);
                     self.start_slot(ret);
+                    setTimeout( ()=> {
+                        if (is_reward) {/// 播放中奖效果动画
+                            self.play_reward_animation(total_reward);
+                            self.play_light_line(line_multiple);
+                        }
+                        self.update_info(null,current_coin,info,total_reward,null);
+                        /////// 解锁按钮
+                        this.btn_start.enabled = true;
+                        this.btn_start.interactable = true;
+                    },5000);
                 }
             }
         });
@@ -278,6 +332,7 @@ export default class MarySlotScene extends cc.Component {
     }
 
     goto_room() {
+        var pinus = GameUtils.getInstance().pinus;
         let route = "mary_slot.marySlotHandler.entry";
         pinus.request(route, {
             room_index:GameUtils.mary_slot_room_index,
