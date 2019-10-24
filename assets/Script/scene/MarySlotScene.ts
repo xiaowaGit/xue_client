@@ -345,7 +345,7 @@ export default class MarySlotScene extends cc.Component {
             }else{
                 cc.log(data);
                 if (data.code == 0) {
-                    this.is_in_room = true;
+                    self.is_in_room = true;
                 }else{
                     let alert:Alert = self.alertDialog.getComponent(Alert);
                     alert.showAlert(data.data, function(){
