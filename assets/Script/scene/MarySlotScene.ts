@@ -337,6 +337,8 @@ export default class MarySlotScene extends cc.Component {
                     setTimeout( ()=> {
                         if (is_reward) {/// 播放中奖效果动画
                             self.play_reward_animation(total_reward);
+                        }
+                        if (line_reward > 0) {
                             self.play_light_line(line_multiple);
                         }
                         self.update_info(null,current_coin,info,total_reward,null);
