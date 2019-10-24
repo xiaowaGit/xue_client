@@ -323,8 +323,8 @@ export default class MarySlotScene extends cc.Component {
                         }
                         self.update_info(null,current_coin,info,total_reward,null);
                         /////// 解锁按钮
-                        this.btn_start.enabled = true;
-                        this.btn_start.interactable = true;
+                        self.btn_start.enabled = true;
+                        self.btn_start.interactable = true;
                     },5000);
                 }
             }
