@@ -95,6 +95,9 @@ export default class MarySlotScene extends cc.Component {
     /// 免费游戏次数
     private free_game_num: number = null;
 
+    //// 金币动效
+    private node_coin: cc.Node;
+
     // onLoad () {}
 
     //////////////////////////////////////-------视图逻辑-----------------------------------------------
@@ -166,21 +169,21 @@ export default class MarySlotScene extends cc.Component {
      * @param pool 
      */
     update_info(name:string,coin:number,info:string,reward:number,pool:number) {
-        if(name)this.lbl_name.string = name;
-        if(coin)this.lbl_coin.string = ''+coin;
-        if(info)this.lbl_info.string = info;
-        if(reward)this.lbl_reward.string = ''+reward;
-        if(pool)this.lbl_pool.string = ''+pool;
+        if(name != null)this.lbl_name.string = name;
+        if(coin != null)this.lbl_coin.string = ''+coin;
+        if(info != null)this.lbl_info.string = info;
+        if(reward != null)this.lbl_reward.string = ''+reward;
+        if(pool != null)this.lbl_pool.string = ''+pool;
     }
 
 
     start_slot(ret:[number[],number[],number[],number[],number[]]) {
 
-        this.slot_list[0].start_up(ret[0],50,4);
-        this.slot_list[1].start_up(ret[1],50,4.4);
-        this.slot_list[2].start_up(ret[2],50,4.8);
-        this.slot_list[3].start_up(ret[3],50,5.2);
-        this.slot_list[4].start_up(ret[4],50,5.6);
+        this.slot_list[0].start_up(ret[0],50,2);
+        this.slot_list[1].start_up(ret[1],50,2.4);
+        this.slot_list[2].start_up(ret[2],50,2.8);
+        this.slot_list[3].start_up(ret[3],50,3.2);
+        this.slot_list[4].start_up(ret[4],50,3.6);
 
 
         // let element_list:Image_Slot[] = [Image_Slot.Image_Banana,Image_Slot.Image_Mango,Image_Slot.Image_Pineapple];
@@ -200,6 +203,17 @@ export default class MarySlotScene extends cc.Component {
         let coin:Coin = node.getComponent(Coin);
         this.node.addChild(node);
         coin.play(total_reward);
+        this.node_coin = node;
+    }
+
+    /**
+     * 停止中奖动画
+     */
+    stop_reward_animation() {
+        if(this.node_coin) {
+            this.node_coin.removeFromParent(true);
+            this.node_coin = null;
+        }
     }
 
     /**
@@ -284,6 +298,10 @@ export default class MarySlotScene extends cc.Component {
             return;
         }
 
+        ///// 停止动效
+        this.stop_light_line();
+        this.stop_reward_animation();
+
         /////// 锁定按钮
         this.btn_start.enabled = false;
         this.btn_start.interactable = false;
@@ -325,7 +343,7 @@ export default class MarySlotScene extends cc.Component {
                         /////// 解锁按钮
                         self.btn_start.enabled = true;
                         self.btn_start.interactable = true;
-                    },5000);
+                    },4000);
                 }
             }
         });
