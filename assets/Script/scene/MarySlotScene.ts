@@ -345,6 +345,10 @@ export default class MarySlotScene extends cc.Component {
                         /////// 解锁按钮
                         self.btn_start.enabled = true;
                         self.btn_start.interactable = true;
+
+                        if (self.small_game_num > 0) {
+                            self.small_game.init(self.small_game_num,current_coin,self.put_bet,self.lbl_coin);
+                        }
                     },4000);
                 }
             }
