@@ -99,9 +99,9 @@ export default class MarySlotScene extends cc.Component {
 
 
     /// 小游戏次数
-    private small_game_num: number = null;
+    private small_game_num: number = 0;
     /// 免费游戏次数
-    private free_game_num: number = null;
+    private free_game_num: number = 0;
 
     //// 金币动效
     private node_coin: cc.Node;
