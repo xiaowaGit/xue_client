@@ -78,6 +78,10 @@ export default class MarySlotScene extends cc.Component {
     @property(cc.Node)
     node_tips: cc.Node = null;
 
+    ///// lbl tips
+    @property(cc.Label)
+    lbl_tips: cc.Label = null;
+
     /// slot
     private slot_list:Slot[] = [];
 
@@ -178,6 +182,7 @@ export default class MarySlotScene extends cc.Component {
         if(info != null)this.lbl_info.string = info;
         if(reward != null)this.lbl_reward.string = ''+reward;
         if(pool != null)this.lbl_pool.string = ''+pool;
+        this.lbl_tips.string = "免费"+this.free_game_num+"次";
     }
 
 
