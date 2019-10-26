@@ -74,6 +74,10 @@ export default class MarySlotScene extends cc.Component {
     @property(cc.Label)
     lbl_pool: cc.Label = null;
 
+    ////// node tips
+    @property(cc.Node)
+    node_tips: cc.Node = null;
+
     /// slot
     private slot_list:Slot[] = [];
 
@@ -201,7 +205,7 @@ export default class MarySlotScene extends cc.Component {
     play_reward_animation(total_reward:number) {
         let node:cc.Node = cc.instantiate(this.coin);
         let coin:Coin = node.getComponent(Coin);
-        this.node.addChild(node);
+        this.node_tips.addChild(node);
         coin.play(total_reward);
         this.node_coin = node;
     }
