@@ -82,6 +82,33 @@ export default class MarySlotScene extends cc.Component {
     @property(cc.Label)
     lbl_tips: cc.Label = null;
 
+
+    //////////////////////  面板相关
+    @property(cc.Button)
+    btn_rule: cc.Button = null;
+    @property(cc.Button)
+    btn_set: cc.Button = null;
+    @property(cc.Button)
+    btn_return: cc.Button = null;
+
+    @property(cc.Node)
+    node_rule: cc.Node = null;
+    @property(cc.Sprite)
+    img_page_1:cc.Sprite = null;
+    @property(cc.Sprite)
+    img_page_2:cc.Sprite = null;
+    @property(cc.Sprite)
+    img_page_3:cc.Sprite = null;
+    @property(cc.Button)
+    btn_next: cc.Button = null;
+    @property(cc.Button)
+    btn_prev: cc.Button = null;
+    @property(cc.Button)
+    btn_close_rule:cc.Button = null;
+
+    //// rule tips 面板 编号
+    private index_tips:number = 1;
+
     /// slot
     private slot_list:Slot[] = [];
 
@@ -149,11 +176,43 @@ export default class MarySlotScene extends cc.Component {
 
         this.small_game.node.active = false;
         // this.small_game.init(3);
+
+        ////////////////// 面板相关
+        this.btn_rule.node.on('click',function () {
+            this.open_rule_panel();
+        },this);
+
+        this.btn_close_rule.node.on('click',function () {
+            this.close_rule_panel();
+        },this);
+
+        this.btn_next.node.on('click',function () {
+            this.index_tips ++;
+            if (this.index_tips > 3) this.index_tips = 3;
+            this.show_index_tips(this.index_tips);
+        },this);
+        
+        this.btn_prev.node.on('click',function () {
+            this.index_tips --;
+            if (this.index_tips < 1) this.index_tips = 1;
+            this.show_index_tips(this.index_tips);
+        },this);
+
+        this.close_rule_panel();
         
         this.alertDialog = cc.instantiate(this.alertPrefab);
         this.alertDialog.x = GameUtils.centre_x;
         this.alertDialog.y = GameUtils.centre_y;
         this.node.addChild(this.alertDialog);
+
+        ///// 返回大厅 按钮
+        this.btn_return.node.on('click',function () {
+            let alert:Alert = this.alertDialog.getComponent(Alert);
+            let self = this;
+            alert.showAlert('是否退出房间?', function(){
+                self.exit_room();
+            }, true);
+        },this);
 
         this.get_info();
         this.goto_room();
@@ -267,6 +326,38 @@ export default class MarySlotScene extends cc.Component {
         this.node_line.active = false;
     }
 
+
+    /**
+     * 显示指定tips 信息
+     * @param index 
+     */
+    show_index_tips(index:number) {
+        index = ~~index;
+        if (index < 1 || index > 3) return;
+        this.img_page_1.node.active = false;
+        this.img_page_2.node.active = false;
+        this.img_page_3.node.active = false;
+
+        if (index == 1)this.img_page_1.node.active = true;
+        else if (index == 2)this.img_page_2.node.active = true;
+        else if (index == 3)this.img_page_3.node.active = true;
+    }
+
+    /**
+     * 打开游戏规则面板
+     */
+    open_rule_panel() {
+        this.node_rule.active = true;
+        this.show_index_tips(this.index_tips);
+    }
+
+    /**
+     * 关闭游戏规则面板
+     */
+    close_rule_panel() {
+        this.node_rule.active = false;
+    }
+
     /////////////////////////////-----------业务逻辑----------------------------------------------------
 
     get_info() {
@@ -331,7 +422,7 @@ export default class MarySlotScene extends cc.Component {
                     }, false);
                     return;
                 }else{
-                    let {ret,small_game_num,line_multiple,free_game_num,pool_multiple,is_reward,line_reward,pool_reward,total_reward,current_coin} = data;
+                    let {ret,small_game_num,line_multiple,free_game_num,pool_multiple,is_reward,line_reward,pool_reward,total_reward,current_coin,handsel_pool} = data;
                     self.small_game_num = small_game_num;
                     self.free_game_num = free_game_num;
                     let line_reward_num: number = 0;
@@ -350,7 +441,7 @@ export default class MarySlotScene extends cc.Component {
                         if (line_reward > 0) {
                             self.play_light_line(line_multiple);
                         }
-                        self.update_info(null,current_coin,info,total_reward,null);
+                        self.update_info(null,current_coin,info,total_reward,handsel_pool);
                         /////// 解锁按钮
                         self.btn_start.enabled = true;
                         self.btn_start.interactable = true;
@@ -379,6 +470,28 @@ export default class MarySlotScene extends cc.Component {
                 cc.log(data);
                 if (data.code == 0) {
                     self.is_in_room = true;
+                }else{
+                    let alert:Alert = self.alertDialog.getComponent(Alert);
+                    alert.showAlert(data.data, function(){
+                    }, false);
+                }
+            }
+        });
+    }
+
+    exit_room() {
+        let self = this;
+        var pinus = GameUtils.getInstance().pinus;
+        let route = "mary_slot.marySlotHandler.leave";
+        pinus.request(route, {
+        }, function(data) {
+            if(data.error) {
+                console.log("xiaowa ========= leave fail");
+                return;
+            }else{
+                cc.log(data);
+                if (data.code == 0) {
+                    cc.director.loadScene("HallScene");
                 }else{
                     let alert:Alert = self.alertDialog.getComponent(Alert);
                     alert.showAlert(data.data, function(){
