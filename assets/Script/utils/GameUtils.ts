@@ -14,7 +14,9 @@ export class GameUtils {
     public static centre_y:number = 540;
 
     ///// http地址
-    public static http_url:string = "http://127.0.0.1:3002";
+    // public static http_url:string = "http://127.0.0.1:3002";
+    public static http_url:string = "http://17731in702.iask.in";
+    
 
     //// 用户 登录 数据
     public static uid:number = null;

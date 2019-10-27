@@ -165,6 +165,9 @@ export default class LoginScene extends cc.Component {
         let self = this;
         // query connector
         function queryEntry(uid, callback) {
+            
+            return callback("17731in702.iask.in", 10426);
+
             var route = 'gate.gateHandler.queryEntry';
             pinus.init({
                 host: host,
