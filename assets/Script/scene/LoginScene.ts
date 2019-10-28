@@ -57,6 +57,11 @@ export default class LoginScene extends cc.Component {
      * 注册账号
      */
     register() {
+        let self = this;
+        /////// 锁定按钮
+        self.btn_register.enabled = false;
+        self.btn_register.interactable = false;
+
         let account:string = this.register_account.string;
         let password:string = this.register_password.string;
         let name:string = this.register_name.string;
@@ -102,6 +107,10 @@ export default class LoginScene extends cc.Component {
             } else if (eventName == 'ERROR') {
                 console.log("错误");
             }
+            
+            /////// 解锁按钮
+            self.btn_register.enabled = true;
+            self.btn_register.interactable = true;
         },this);
     }
 
