@@ -75,16 +75,25 @@ export default class LoginScene extends cc.Component {
             alert.showAlert('账户名过短.', function(){
                 console.log("xiaowa========== account.length < 5");
             }, false);
+            /////// 解锁按钮
+            self.btn_register.enabled = true;
+            self.btn_register.interactable = true;
             return;
         }
         if (password.length < 5) {
             alert.showAlert('密码过短.', function(){
             }, false);
+            /////// 解锁按钮
+            self.btn_register.enabled = true;
+            self.btn_register.interactable = true;
             return;
         }
         if (name.length < 1) {
             alert.showAlert('姓名过短.', function(){
             }, false);
+            /////// 解锁按钮
+            self.btn_register.enabled = true;
+            self.btn_register.interactable = true;
             return;
         }
         let url:string = GameUtils.http_url+'/register';
