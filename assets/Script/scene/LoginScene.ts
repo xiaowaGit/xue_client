@@ -119,6 +119,9 @@ export default class LoginScene extends cc.Component {
      */
     login() {
 
+        this.btn_login.enabled = false;//防止继续点击
+        this.btn_login.interactable = false;
+        
         let account:string = this.login_account.string;
         let password:string = this.login_password.string;
 
