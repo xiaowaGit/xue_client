@@ -43,6 +43,7 @@ export default class Notice extends cc.Component {
 
     //// 组件被销毁时触发该方法
     onDestroy() {
+        // console.log("xiaowa ==========================  Notice onDestroy.");
         this.pinus.off("onNotice",this._onNotice);
     }
 }
