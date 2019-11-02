@@ -21,7 +21,7 @@ export default class Notice extends cc.Component {
         this.node.active = false;
         this.lbl_info.node.x = 750;
         let self = this;
-        let action_begin = cc.moveBy(1,-1500,0);
+        let action_begin = cc.moveBy(8,-1500,0);
         let action_end = cc.callFunc(function () {
             self.node.active = false;
         },this);
