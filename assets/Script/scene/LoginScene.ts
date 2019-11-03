@@ -70,9 +70,10 @@ export default class LoginScene extends cc.Component {
         else if (this.sex_woman.isChecked) sex = '女';
 
         let alert:Alert = this.alertDialog.getComponent(Alert);
+        let b=/^[a-zA-Z\d]\w{2,10}[a-zA-Z\d]$/;
         ///// 检测参数
-        if (account.length < 5) {
-            alert.showAlert('账户名过短.', function(){
+        if (!b.test(account) || account.length < 5) {
+            alert.showAlert('账户名不合法.', function(){
                 console.log("xiaowa========== account.length < 5");
             }, false);
             /////// 解锁按钮
@@ -80,8 +81,8 @@ export default class LoginScene extends cc.Component {
             self.btn_register.interactable = true;
             return;
         }
-        if (password.length < 5) {
-            alert.showAlert('密码过短.', function(){
+        if (!b.test(password) || password.length < 5) {
+            alert.showAlert('密码不合法.', function(){
             }, false);
             /////// 解锁按钮
             self.btn_register.enabled = true;
